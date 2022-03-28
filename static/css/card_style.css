@@ -1,0 +1,12 @@
+.rcorners {
+    border-radius: 25px;
+    border: 2px solid #73AD21;
+    padding: 20px;
+    width: 200px;
+    height: 150px;
+    background: #cfff9f;
+}
+
+.avatar {
+    border: 2px solid #0015bf;
+}

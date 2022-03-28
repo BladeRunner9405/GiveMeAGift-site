@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>GiveMeAGift</title>
+</head>
+<body>
+{% extends "base.html" %}
+
+{% block content %}
+<center>
+    <h1>Желания других пользователей!</h1>
+    <br>
+    {% for item in wishes%}
+    <link href="../static/css/card_style.css" rel="stylesheet">
+    <div class="card card-cover h-100 w-50 rcorners">
+
+
+        <h2 align="left">{{item.title}} <img src="{{ item.user.picture }}" alt="Аватарка" width="64" height="64"
+                                             align="right"
+                                             class="rounded-circle avatar"></h2>
+        <div align="left">
+            {{item.description}}
+        </div>
+        <br>
+        <div>
+            <img src="{{ item.main_picture }}" width="200px" alt="здесь картинка">
+        </div>
+        <br>
+        <div>
+            Автор - {{item.user.name }} {{ item.user.surname }}, Дата написания - {{item.created_date}}
+        </div>
+
+    </div>
+    <br>
+    {% endfor %}
+    {% endblock %}
+</center>
+
+
+</body>
+</html>
