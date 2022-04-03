@@ -1,0 +1,53 @@
+<!doctype html>
+<link rel="stylesheet" href="../static/css/avatar.css">
+<link rel="stylesheet" href="../static/css/main.css">
+{% extends "base.html" %}
+
+{% block content %}
+<div class="center">
+    <img src="{{ user.picture }}" alt="Аватарка" width="256" height="256" class="avatar">
+    <br>
+    <h1>{{ user.name }} {{ user.surname }}</h1>
+    <br><br>
+    <h3>{{ user.about }} </h3>
+    <br><br>
+</div>
+{% for item in wishes%}
+<div class="block">
+    <div id="container">
+        <div id="image" style="float:right;">
+            <img src="{{ user.picture }}" alt="Аватарка" width="64" height="64" class="avatar">
+        </div>
+        <div id="texts" style="float:left;">
+            <h1>{{ item.title }}</h1>
+        </div>
+    </div>
+    <br><br><br><br><br><br>
+
+    <h2>{{ item.description }}</h2>
+    <br><br>
+    <div class="center">
+        <img src="{{ item.main_picture }}" alt="Картинка" width="512">
+        <br>
+    </div>
+    {% for picture in item.pictures %}
+    <div class="center">
+        <img src="{{ picture }}" alt="Картинка" width="512">
+        <br>
+    </div>
+    {% endfor %}
+    <div style="float:right">
+        <h3>Дата: {{ item.date }}</h3>
+    </div>
+    <div style="float:left;">
+        <h3>Автор: {{ user.name }}</h3>
+    </div>
+    <br><br>
+
+</div>
+<br><br>
+{% endfor %}
+</div>
+{% endblock %}
+    
+    

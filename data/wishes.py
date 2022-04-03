@@ -16,8 +16,10 @@ class Wishes(SqlAlchemyBase, SerializerMixin):
     title = sqlalchemy.Column(sqlalchemy.String, nullable=False)
     description = sqlalchemy.Column(sqlalchemy.String, nullable=False)
     main_picture = sqlalchemy.Column(sqlalchemy.String, nullable=True)
+    pictures = sqlalchemy.Column(sqlalchemy.String, nullable=True)
     create_date = sqlalchemy.Column(sqlalchemy.DateTime,
                                     default=datetime.datetime.now)
+
     is_booked = sqlalchemy.Column(sqlalchemy.Boolean, default=False, nullable=False)
 
     user = orm.relation('User')

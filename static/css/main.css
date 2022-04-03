@@ -1,0 +1,18 @@
+.center {
+    text-align: center;
+}
+
+.block {
+    margin: auto;
+    border-radius: 25px;
+    border: 2px solid #73AD21;
+    padding: 10px;
+    width: 70%;
+    background: #cfff9f;
+}
+
+.present_picture {
+    margin: auto;
+    padding: 10px;
+    border: 2px solid #6f00ff;
+}

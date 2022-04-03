@@ -110,6 +110,14 @@ def logout():
     return redirect("/")
 
 
+@app.route('/profile/<int:id>', methods=['GET', 'POST'])
+def profile(id):
+    db_sess = db_session.create_session()
+    user = db_sess.query(User).filter(User.id == id).first()
+    wishes = db_sess.query(Wishes).filter(Wishes.user_id == id)
+    return render_template('test.html', user=user, wishes=wishes)
+
+
 if __name__ == '__main__':
     db_session.global_init("db/give_me_a_gift.db")
     port = int(os.environ.get("PORT", 5000))
