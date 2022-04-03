@@ -30,12 +30,19 @@
         <img src="{{ item.main_picture }}" alt="Картинка" width="512">
         <br>
     </div>
-    {% for picture in item.pictures %}
+    <br><br><br>
+    {% set a = item.pictures %}
+
+    {% if a != None %}
+    {% for picture in a.split(';') %}
     <div class="center">
+        <br><br><br>
         <img src="{{ picture }}" alt="Картинка" width="512">
-        <br>
+        <br><br><br>
     </div>
     {% endfor %}
+    {% endif %}
+
     <div style="float:right">
         <h3>Дата: {{ item.date }}</h3>
     </div>
