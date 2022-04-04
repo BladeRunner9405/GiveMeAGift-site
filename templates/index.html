@@ -15,10 +15,13 @@
     <link href="../static/css/card_style.css" rel="stylesheet">
     <div class="card card-cover h-100 w-50 rcorners">
 
+        {% set id = item.user.id%}
 
-        <h2 align="left">{{item.title}} <img src="{{ item.user.picture }}" alt="Аватарка" width="64" height="64"
+        <h2 align="left">{{item.title}} <a href="/profile/{{ id }}"> <img src="{{ item.user.picture }}" alt="Аватарка" width="64"
+                                             height="64"
                                              align="right"
-                                             class="rounded-circle avatar"></h2>
+                                             class="rounded-circle avatar"></a></h2>
+
         <div align="left">
             {{item.description}}
         </div>
