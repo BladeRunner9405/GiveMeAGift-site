@@ -48,8 +48,7 @@ def start():
     # else:
     #     news = db_sess.query(News).filter(News.is_private != True)
     wishes = db_sess.query(Wishes)
-    pictures = db_sess.query(Pictures)
-    return render_template("index.html", wishes=wishes, pictures=pictures)
+    return render_template("index.html", wishes=wishes)
 
 
 @app.route('/index')

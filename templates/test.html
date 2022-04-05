@@ -22,7 +22,7 @@
             <h1>{{ item.title }}</h1>
         </div>
     </div>
-    <br><br><br><br><br><br>
+    <br><br><br>
 
     <h2>{{ item.description }}</h2>
     <br><br>
@@ -44,7 +44,7 @@
     {% endif %}
 
     <div style="float:right">
-        <h3>Дата: {{ item.date }}</h3>
+        <h3>Дата: {{ item.create_date }}</h3>
     </div>
     <div style="float:left;">
         <h3>Автор: {{ user.name }}</h3>

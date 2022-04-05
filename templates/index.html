@@ -17,10 +17,11 @@
 
         {% set id = item.user.id%}
 
-        <h2 align="left">{{item.title}} <a href="/profile/{{ id }}"> <img src="{{ item.user.picture }}" alt="Аватарка" width="64"
-                                             height="64"
-                                             align="right"
-                                             class="rounded-circle avatar"></a></h2>
+        <h2 align="left">{{item.title}} <a href="/profile/{{ id }}"> <img src="{{ item.user.picture }}" alt="Аватарка"
+                                                                          width="64"
+                                                                          height="64"
+                                                                          align="right"
+                                                                          class="rounded-circle avatar"></a></h2>
 
         <div align="left">
             {{item.description}}
@@ -30,8 +31,14 @@
             <img src="{{ item.main_picture }}" width="200px" alt="здесь картинка">
         </div>
         <br>
-        <div>
-            Автор - {{item.user.name }} {{ item.user.surname }}, Дата написания - {{item.created_date}}
+        <div id="container">
+            <div style="float:right">
+                <h5>Дата: {{ item.create_date }}</h5>
+            </div>
+            <div style="float:left;">
+                <h5>Автор: {{ item.user.name }}</h5>
+            </div>
+
         </div>
 
     </div>
