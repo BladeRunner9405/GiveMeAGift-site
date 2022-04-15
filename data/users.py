@@ -24,6 +24,8 @@ class User(SqlAlchemyBase, UserMixin, SerializerMixin):
     hashed_password = sqlalchemy.Column(sqlalchemy.String, nullable=False)
     friends = sqlalchemy.Column(sqlalchemy.Text)
 
+    wishes = orm.relation("Wishes", back_populates='user')
+
     def set_password(self, password):
         self.hashed_password = generate_password_hash(password)
 

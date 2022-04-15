@@ -23,3 +23,4 @@ class Wishes(SqlAlchemyBase, SerializerMixin):
     is_booked = sqlalchemy.Column(sqlalchemy.Boolean, default=False, nullable=False)
 
     user = orm.relation('User')
+

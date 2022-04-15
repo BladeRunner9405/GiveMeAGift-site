@@ -1,14 +1,15 @@
 import os
 
-from flask import Flask, render_template, url_for
-from flask_login import LoginManager, login_user, login_required, logout_user
-from werkzeug.utils import redirect
+from flask import Flask, render_template, url_for, abort
+from flask_login import LoginManager, login_user, login_required, logout_user, current_user
+from werkzeug.utils import redirect, secure_filename
 
 from data import db_session
 from data.pictures import Pictures
 from data.users import User
 from data.wishes import Wishes
 from forms.user import RegisterForm, LoginForm
+from forms.wish import WishForm
 
 app = Flask(__name__)
 
@@ -75,7 +76,7 @@ def info():
 
 
 @app.route('/register', methods=['GET', 'POST'])
-def reqister():
+def register():
     form = RegisterForm()
     if form.validate_on_submit():
         if form.password.data != form.password_again.data:
@@ -109,12 +110,51 @@ def logout():
     return redirect("/")
 
 
+@app.route('/add_wish', methods=['GET', 'POST'])
+def add_wish():
+    form = WishForm()
+    print('Проверяю')
+    if form.validate_on_submit():
+        db_sess = db_session.create_session()
+        wish = Wishes()
+        wish.title = form.title.data
+        wish.description = form.content.data
+        f = form.main_picture.data
+        filename = secure_filename(f.filename)
+        way = os.path.join(
+            'static', 'img', filename
+        )
+        f.save(way)
+        wish.main_picture = f'../static/img/{filename}'
+        # wish.is_private = form.is_private.data
+        current_user.wishes.append(wish)
+        db_sess.merge(current_user)
+        db_sess.commit()
+        return redirect('/')
+    return render_template('add_wish.html', form=form)
+
+
+@app.route('/news_delete/<int:id>', methods=['GET', 'POST'])
+@login_required
+def news_delete(id):
+    db_sess = db_session.create_session()
+    wish = db_sess.query(Wishes).filter(Wishes.id == id,
+                                      Wishes.user_id == current_user.id
+                                      ).first()
+    if wish:
+        db_sess.delete(wish)
+        db_sess.commit()
+    else:
+        abort(404)
+    return redirect(f'/profile/{current_user.id}')
+
+
 @app.route('/profile/<int:id>', methods=['GET', 'POST'])
 def profile(id):
     db_sess = db_session.create_session()
     user = db_sess.query(User).filter(User.id == id).first()
     wishes = db_sess.query(Wishes).filter(Wishes.user_id == id)
-    return render_template('test.html', user=user, wishes=wishes)
+    return render_template('profile.html', user=user, wishes=wishes)
 
 
 if __name__ == '__main__':

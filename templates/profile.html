@@ -1,0 +1,78 @@
+<!doctype html>
+<link rel="stylesheet" href="../static/css/avatar.css">
+<link rel="stylesheet" href="../static/css/main.css">
+{% extends "base.html" %}
+
+{% block content %}
+<div class="center">
+    {% if user.picture %}
+    <img src="{{ user.picture }}" alt="Картинка" height="256" class="avatar">
+    {%else%}
+    <img src="../static/img/null_user.png" alt="Картинка" height="256" class="avatar">
+    {% endif %}
+
+
+    <br>
+    <h1>{{ user.name }} {{ user.surname }}</h1>
+    <br><br>
+    <h3>{{ user.about }} </h3>
+    <br><br>
+</div>
+{% for item in wishes%}
+<div class="block">
+    <div id="container">
+        <div id="image" style="float:right;">
+            {% if item.user.picture %}
+            <img src="{{ user.picture }}" alt="Аватарка" width="64" height="64" class="avatar">
+            {%else%}
+            <img src="../static/img/null_user.png" alt="Аватарка" width="64" height="64" class="avatar">
+            {% endif %}
+
+        </div>
+        <div id="texts" style="float:left;">
+            <h1>{{ item.title }}</h1>
+        </div>
+    </div>
+    <br><br><br>
+
+    <h2>{{ item.description }}</h2>
+    <br><br>
+    <div class="center">
+        {% if item.main_picture %}
+        <div>
+            <img src="{{ item.main_picture }}" width="512" alt="здесь картинка">
+        </div>
+        {% endif %}
+        <br>
+    </div>
+    <br><br><br>
+    {% set a = item.pictures %}
+
+    {% if a != None %}
+    {% for picture in a.split(';') %}
+    <div class="center">
+        <br><br><br>
+        <img src="{{ picture }}" alt="Картинка" width="512">
+        <br><br><br>
+    </div>
+    {% endfor %}
+    {% endif %}
+    <div style="float:right">
+        <h3>Дата: {{ item.create_date }}</h3>
+    </div>
+    <div style="float:left;">
+        <h3>Автор: {{ user.name }}</h3>
+    </div>
+    <br><br>
+    {% if user.id == current_user.id %}
+    <a href="/news_delete/{{ item.id }}" class="btn btn-danger">Удалить новость</a>
+    {% endif %}
+
+</div>
+<br><br>
+
+{% endfor %}
+</div>
+{% endblock %}
+    
+    

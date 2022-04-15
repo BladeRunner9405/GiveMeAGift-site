@@ -11,25 +11,41 @@
 <center>
     <h1>Желания других пользователей!</h1>
     <br>
+    {% if current_user.is_authenticated %}
+    <a href="add_wish" class="btn btn-secondary">Добавить новость</a>
+    {% endif %}
     {% for item in wishes%}
     <link href="../static/css/card_style.css" rel="stylesheet">
     <div class="card card-cover h-100 w-50 rcorners">
 
         {% set id = item.user.id%}
 
+
+        {% if item.user.picture %}
         <h2 align="left">{{item.title}} <a href="/profile/{{ id }}"> <img src="{{ item.user.picture }}" alt="Аватарка"
                                                                           width="64"
                                                                           height="64"
                                                                           align="right"
                                                                           class="rounded-circle avatar"></a></h2>
+        {%else%}
+        <h2 align="left">{{item.title}} <a href="/profile/{{ id }}"> <img src="../static/img/null_user.png"
+                                                                          alt="Аватарка"
+                                                                          width="64"
+                                                                          height="64"
+                                                                          align="right"
+                                                                          class="rounded-circle avatar"></a></h2>
+        {% endif %}
+
 
         <div align="left">
             {{item.description}}
         </div>
         <br>
+        {% if item.main_picture %}
         <div>
             <img src="{{ item.main_picture }}" width="200px" alt="здесь картинка">
         </div>
+        {% endif %}
         <br>
         <div id="container">
             <div style="float:right">
