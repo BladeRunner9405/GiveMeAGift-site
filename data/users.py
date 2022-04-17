@@ -18,12 +18,12 @@ class User(SqlAlchemyBase, UserMixin, SerializerMixin):
     surname = sqlalchemy.Column(sqlalchemy.String, nullable=False)
     about = sqlalchemy.Column(sqlalchemy.CHAR, nullable=True, default='')
     age = sqlalchemy.Column(sqlalchemy.Integer)
-    picture = sqlalchemy.Column(sqlalchemy.String)
+    picture = sqlalchemy.Column(sqlalchemy.String, nullable=False)
     email = sqlalchemy.Column(sqlalchemy.String, index=True,
                               unique=True, nullable=False)
     hashed_password = sqlalchemy.Column(sqlalchemy.String, nullable=False)
     friends = sqlalchemy.Column(sqlalchemy.Text)
-    booked  = sqlalchemy.Column(sqlalchemy.String, default='0 ', nullable=False)
+    booked = sqlalchemy.Column(sqlalchemy.String, default='0 ', nullable=False)
 
     wishes = orm.relation("Wishes", back_populates='user')
 

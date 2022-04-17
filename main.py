@@ -1,11 +1,12 @@
 import os
 import sqlite3
 
-from flask import Flask, render_template, url_for, abort
+from flask import Flask, render_template, url_for, abort, make_response, jsonify
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
+from flask_restful import Api
 from werkzeug.utils import redirect, secure_filename
 
-from data import db_session
+from data import db_session, wishes_api, wishes_resources
 from data.pictures import Pictures
 from data.users import User
 from data.wishes import Wishes
@@ -13,8 +14,15 @@ from forms.user import RegisterForm, LoginForm
 from forms.wish import WishForm
 
 app = Flask(__name__)
-
+api = Api(app)
 app.config['SECRET_KEY'] = 'yandexlyceum_secret_key'
+
+
+# для списка объектов
+api.add_resource(wishes_resources.WishesListResource, '/api/v2/wishes')
+
+# для одного объекта
+api.add_resource(wishes_resources.WishesResource, '/api/v2/wishes/<int:wishes_id>')
 
 login_manager = LoginManager()
 login_manager.init_app(app)
@@ -95,9 +103,19 @@ def register():
             age=form.age.data,
             email=form.email.data,
             about=form.about.data,
-            picture=form.picture.data
         )
         user.set_password(form.password.data)
+        import os.path
+        path = os.path.join('static', 'img')
+        num_files = len([f for f in os.listdir(path)
+                         if os.path.isfile(os.path.join(path, f))])
+        f = form.picture.data
+        filename = secure_filename(f.filename)
+        way = os.path.join(
+            'static', 'img', str(num_files + 1) + "avatar"
+        )
+        f.save(way)
+        user.picture = f'../static/img/{num_files + 1}avatar'
         db_sess.add(user)
         db_sess.commit()
         return redirect('/login')
@@ -245,7 +263,16 @@ def booked_wishes():
     return render_template("booked_wishes.html", wishes=wishes, pictures=pictures, booked=answer)
 
 
+@app.errorhandler(404)
+def not_found(error):
+    return make_response(jsonify({'error': 'Not found'}), 404)
+
+
+
 if __name__ == '__main__':
     db_session.global_init("db/give_me_a_gift.db")
+    app.register_blueprint(wishes_api.blueprint)
     port = int(os.environ.get("PORT", 5000))
     app.run(host='0.0.0.0', port=port)
+
+
