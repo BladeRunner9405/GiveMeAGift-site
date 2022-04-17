@@ -11,7 +11,8 @@
 <center>
     <h1>Желания, которые вы забронировали!</h1>
     <br>
-    {% for item in wishes%}
+    {% if booked|length > 1 %}
+    {% for item in wishes[::-1]%}
     {% if item.id in booked%}
     <link href="../static/css/card_style.css" rel="stylesheet">
     <div class="card card-cover h-100 w-50 rcorners">
@@ -54,11 +55,29 @@
             </div>
 
         </div>
-
+        <a href="/wish_is_ready/{{ item.id }}" class="btn btn btn-success">Нажмите сюда, если вы исполнили это желание</a>
+        <br>
+        <a href="/unbook_wish/{{ item.id }}" class="btn btn btn-warning">Нажмите сюда, если не хотите выполнять это желание</a>
     </div>
     <br>
+
     {% endif %}
     {% endfor %}
+    {% else %}
+    {% if current_user.is_authenticated %}
+    <br><br><br>
+    <h4 style="color:#0071b8"><------------------------------------------------------------------------------></h4>
+    <h4 style="color:#0071b8">Все забронированные вами желания будут отображаться сдесь!</h4>
+    <h4 style="color:#0071b8"><------------------------------------------------------------------------------></h4>
+    <br><br><br>
+    {% else %}
+    <br><br><br>
+    <h4 style="color:#0071b8"><-------------------------------------------------------------------------------></h4>
+    <h4 style="color:#0071b8">Зарегистрируйтесь и все забронированные вами желания окажутся сдесь!</h4>
+    <h4 style="color:#0071b8"><-------------------------------------------------------------------------------></h4>
+    <br><br><br>
+    {% endif %}
+    {% endif %}
 
 </center>
 {% endblock %}

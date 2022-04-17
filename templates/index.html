@@ -59,8 +59,12 @@
         {% if current_user.is_authenticated %}
         {% if not item.is_booked %}
         {% if item.user_id != current_user.id %}
-        <a href="/book_wish/{{ item.id }}/{{ id }}" class="btn btn-info">Забронировать желание</a>
+        <a href="/book_wish/{{ item.id }}" class="btn btn-info">Забронировать желание</a>
+        {% else %}
+        <h5 style="color:#0054c1">Это ваше желание</h5>
         {% endif %}
+        {% else %}
+        <h5 style="color:#ff0000">Желание забронировано!</h5>
         {% endif %}
         {% endif %}
 

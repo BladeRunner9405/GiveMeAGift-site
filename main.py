@@ -161,19 +161,8 @@ def profile(id):
     return render_template('profile.html', user=user, wishes=wishes)
 
 
-@app.route('/book_wish/<int:id>/<int:user_id>', methods=['GET', 'POST'])
-def book_wish(id, user_id):
-    # db_sess = db_session.create_session()
-    # wish = db_sess.query(Wishes).filter(Wishes.id == id,
-    #                                     Wishes.user_id == current_user.id
-    #                                     ).first()
-    # if wish:
-    #     db_sess.(wish)
-    #     db_sess.commit()
-    # else:
-    #     abort(404)
-    # return redirect(f'/profile/{current_user.id}')
-
+@app.route('/book_wish/<int:id>', methods=['GET', 'POST'])
+def book_wish(id):
     database = 'db/give_me_a_gift.db'
     con = sqlite3.connect(database)
     cur = con.cursor()
@@ -182,7 +171,6 @@ def book_wish(id, user_id):
         answer = answer.split()
     else:
         answer = [str(answer)]
-    print(answer)
     if str(id) not in answer:
         answer.append(str(id))
         answer = ' '.join(answer)
@@ -193,7 +181,52 @@ def book_wish(id, user_id):
         cur.execute(command2).fetchall()
         con.commit()
     con.close()
-    return redirect(f'/profile/{user_id}')
+    return redirect(f'/booked_wishes')
+
+
+@app.route('/wish_is_ready/<int:id>', methods=['GET', 'POST'])
+def wish_is_ready(id):
+    database = 'db/give_me_a_gift.db'
+    con = sqlite3.connect(database)
+    cur = con.cursor()
+
+    answer = cur.execute(f'SELECT booked FROM users WHERE id == {current_user.id}').fetchall()[0][0]
+    if type(answer) != int:
+        answer = answer.split()
+    else:
+        answer = [str(answer)]
+    if str(id) in answer:
+        del answer[answer.index(str(id))]
+        answer = ' '.join(answer)
+        command1 = f"UPDATE users SET booked = '{answer}' WHERE id = {current_user.id}"
+        cur.execute(command1).fetchall()
+    command = f"DELETE FROM wishes WHERE id = {id}"
+    cur.execute(command).fetchall()
+    con.commit()
+    con.close()
+    return redirect(f'/booked_wishes')
+
+
+@app.route('/unbook_wish/<int:id>', methods=['GET', 'POST'])
+def unbook_wish(id):
+    database = 'db/give_me_a_gift.db'
+    con = sqlite3.connect(database)
+    cur = con.cursor()
+    answer = cur.execute(f'SELECT booked FROM users WHERE id == {current_user.id}').fetchall()[0][0]
+    if type(answer) != int:
+        answer = answer.split()
+    else:
+        answer = [str(answer)]
+    if str(id) in answer:
+        del answer[answer.index(str(id))]
+        answer = ' '.join(answer)
+        command1 = f"UPDATE users SET booked = '{answer}' WHERE id = {current_user.id}"
+        command2 = f"UPDATE wishes SET is_booked = 0 WHERE id = {id}"
+        cur.execute(command1).fetchall()
+        cur.execute(command2).fetchall()
+        con.commit()
+    con.close()
+    return redirect(f'/booked_wishes')
 
 
 @app.route('/booked_wishes', methods=['GET', 'POST'])
@@ -204,13 +237,12 @@ def booked_wishes():
     cur = con.cursor()
     answer = cur.execute(f'SELECT booked FROM users WHERE id == {current_user.id}').fetchall()[0][0]
     if type(answer) != int:
-        answer = map(int, answer.split())
+        answer = list(map(int, answer.split()))
     else:
         answer = [int(answer)]
     wishes = db_sess.query(Wishes)
     pictures = db_sess.query(Pictures)
     return render_template("booked_wishes.html", wishes=wishes, pictures=pictures, booked=answer)
-
 
 
 if __name__ == '__main__':
