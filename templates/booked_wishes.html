@@ -9,12 +9,10 @@
 
 {% block content %}
 <center>
-    <h1>Желания других пользователей!</h1>
+    <h1>Желания, которые вы забронировали!</h1>
     <br>
-    {% if current_user.is_authenticated %}
-    <a href="add_wish" class="btn btn-secondary">Добавить желание</a>
-    {% endif %}
-    {% for item in wishes[::-1]%}
+    {% for item in wishes%}
+    {% if item.id in booked%}
     <link href="../static/css/card_style.css" rel="stylesheet">
     <div class="card card-cover h-100 w-50 rcorners">
 
@@ -56,16 +54,10 @@
             </div>
 
         </div>
-        {% if current_user.is_authenticated %}
-        {% if not item.is_booked %}
-        {% if item.user_id != current_user.id %}
-        <a href="/book_wish/{{ item.id }}/{{ id }}" class="btn btn-info">Забронировать желание</a>
-        {% endif %}
-        {% endif %}
-        {% endif %}
 
     </div>
     <br>
+    {% endif %}
     {% endfor %}
 
 </center>

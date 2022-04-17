@@ -1,4 +1,5 @@
 import os
+import sqlite3
 
 from flask import Flask, render_template, url_for, abort
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
@@ -113,8 +114,11 @@ def logout():
 @app.route('/add_wish', methods=['GET', 'POST'])
 def add_wish():
     form = WishForm()
-    print('Проверяю')
     if form.validate_on_submit():
+        import os.path
+        path = os.path.join('static', 'img')
+        num_files = len([f for f in os.listdir(path)
+                         if os.path.isfile(os.path.join(path, f))])
         db_sess = db_session.create_session()
         wish = Wishes()
         wish.title = form.title.data
@@ -122,10 +126,10 @@ def add_wish():
         f = form.main_picture.data
         filename = secure_filename(f.filename)
         way = os.path.join(
-            'static', 'img', filename
+            'static', 'img', str(num_files + 1)
         )
         f.save(way)
-        wish.main_picture = f'../static/img/{filename}'
+        wish.main_picture = f'../static/img/{num_files + 1}'
         # wish.is_private = form.is_private.data
         current_user.wishes.append(wish)
         db_sess.merge(current_user)
@@ -139,8 +143,8 @@ def add_wish():
 def news_delete(id):
     db_sess = db_session.create_session()
     wish = db_sess.query(Wishes).filter(Wishes.id == id,
-                                      Wishes.user_id == current_user.id
-                                      ).first()
+                                        Wishes.user_id == current_user.id
+                                        ).first()
     if wish:
         db_sess.delete(wish)
         db_sess.commit()
@@ -155,6 +159,58 @@ def profile(id):
     user = db_sess.query(User).filter(User.id == id).first()
     wishes = db_sess.query(Wishes).filter(Wishes.user_id == id)
     return render_template('profile.html', user=user, wishes=wishes)
+
+
+@app.route('/book_wish/<int:id>/<int:user_id>', methods=['GET', 'POST'])
+def book_wish(id, user_id):
+    # db_sess = db_session.create_session()
+    # wish = db_sess.query(Wishes).filter(Wishes.id == id,
+    #                                     Wishes.user_id == current_user.id
+    #                                     ).first()
+    # if wish:
+    #     db_sess.(wish)
+    #     db_sess.commit()
+    # else:
+    #     abort(404)
+    # return redirect(f'/profile/{current_user.id}')
+
+    database = 'db/give_me_a_gift.db'
+    con = sqlite3.connect(database)
+    cur = con.cursor()
+    answer = cur.execute(f'SELECT booked FROM users WHERE id == {current_user.id}').fetchall()[0][0]
+    if type(answer) != int:
+        answer = answer.split()
+    else:
+        answer = [str(answer)]
+    print(answer)
+    if str(id) not in answer:
+        answer.append(str(id))
+        answer = ' '.join(answer)
+        command1 = f"UPDATE users SET booked = '{answer}' WHERE id = {current_user.id}"
+        command2 = f"UPDATE wishes SET is_booked = 1 WHERE id = {id}"
+
+        cur.execute(command1).fetchall()
+        cur.execute(command2).fetchall()
+        con.commit()
+    con.close()
+    return redirect(f'/profile/{user_id}')
+
+
+@app.route('/booked_wishes', methods=['GET', 'POST'])
+def booked_wishes():
+    db_sess = db_session.create_session()
+    database = 'db/give_me_a_gift.db'
+    con = sqlite3.connect(database)
+    cur = con.cursor()
+    answer = cur.execute(f'SELECT booked FROM users WHERE id == {current_user.id}').fetchall()[0][0]
+    if type(answer) != int:
+        answer = map(int, answer.split())
+    else:
+        answer = [int(answer)]
+    wishes = db_sess.query(Wishes)
+    pictures = db_sess.query(Pictures)
+    return render_template("booked_wishes.html", wishes=wishes, pictures=pictures, booked=answer)
+
 
 
 if __name__ == '__main__':

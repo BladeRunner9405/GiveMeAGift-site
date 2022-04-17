@@ -18,7 +18,7 @@
     <h3>{{ user.about }} </h3>
     <br><br>
 </div>
-{% for item in wishes%}
+{% for item in wishes[::-1] %}
 <div class="block">
     <div id="container">
         <div id="image" style="float:right;">
@@ -65,7 +65,13 @@
     </div>
     <br><br>
     {% if user.id == current_user.id %}
-    <a href="/news_delete/{{ item.id }}" class="btn btn-danger">Удалить новость</a>
+    <a href="/news_delete/{{ item.id }}" class="btn btn-danger">Удалить желание</a>
+    {% else %}
+    {% if current_user.is_authenticated %}
+    {% if not item.is_booked %}
+    <a href="/book_wish/{{ item.id }}/{{ user.id }}" class="btn btn-info">Забронировать желание</a>
+    {% endif %}
+    {% endif %}
     {% endif %}
 
 </div>

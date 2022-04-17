@@ -23,6 +23,7 @@ class User(SqlAlchemyBase, UserMixin, SerializerMixin):
                               unique=True, nullable=False)
     hashed_password = sqlalchemy.Column(sqlalchemy.String, nullable=False)
     friends = sqlalchemy.Column(sqlalchemy.Text)
+    booked  = sqlalchemy.Column(sqlalchemy.String, default='0 ', nullable=False)
 
     wishes = orm.relation("Wishes", back_populates='user')
 
@@ -31,3 +32,5 @@ class User(SqlAlchemyBase, UserMixin, SerializerMixin):
 
     def check_password(self, password):
         return check_password_hash(self.hashed_password, password)
+
+

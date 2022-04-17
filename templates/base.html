@@ -60,19 +60,25 @@
         <header class="d-flex flex-wrap align-items-center justify-content-center justify-content-md-between py-3 mb-4 border-bottom">
             <object type="image/svg+xml" data="../static/img/present.svg" width="40px"></object>
             <ul class="nav col-12 col-md-auto mb-2 justify-content-center mb-md-0">
-                <li><a href="/" class="nav-link px-2 link-secondary">Home</a></li>
-                <li><a href="/info" class="nav-link px-2 link-dark">About</a></li>
+                <li><a href="/" class="nav-link px-2 link-secondary">На главную</a></li>
+                <li><a href="/info" class="nav-link px-2 link-dark">О нас</a></li>
+                {% if current_user.is_authenticated %}
+                <li><a href="/booked_wishes" class="nav-link px-2 link-dark">Забронированные мною желания</a></li>
+                {% endif %}
             </ul>
             {% if current_user.is_authenticated %}
 
-            <h2> <a href="/profile/{{ current_user.id }}"> {{ current_user.name }}</a></h2>
-                <button type="button" class="btn btn-primary" onclick="window.location.href='/logout'">Sign-out</button>
+            <h2><a href="/profile/{{ current_user.id }}"> {{ current_user.name }}</a></h2>
+            <button type="button" class="btn btn-primary" onclick="window.location.href='/logout'">Sign-out</button>
             {% else %}
-                <div class="col-md-3 text-end">
-                    <button type="button" class="btn btn-outline-primary me-2" onclick="window.location.href='/login'">Login</button>
-                    <button type="button" class="btn btn-primary" onclick="window.location.href='/register'">Sign-up</button>
-                </div>
-                {% endif %}
+            <div class="col-md-3 text-end">
+                <button type="button" class="btn btn-outline-primary me-2" onclick="window.location.href='/login'">
+                    Login
+                </button>
+                <button type="button" class="btn btn-primary" onclick="window.location.href='/register'">Sign-up
+                </button>
+            </div>
+            {% endif %}
         </header>
     </div>
     <div class="b-example-divider"></div>
@@ -89,8 +95,11 @@
         </a>
 
         <ul class="nav col-md-4 justify-content-end">
-            <li class="nav-item"><a href="/" class="nav-link px-2 text-muted">Home</a></li>
-            <li class="nav-item"><a href="info" class="nav-link px-2 text-muted">About</a></li>
+            <li class="nav-item"><a href="/" class="nav-link px-2 text-muted">На главную</a></li>
+            <li class="nav-item"><a href="info" class="nav-link px-2 text-muted">О нас</a></li>
+            {% if current_user.is_authenticated %}
+            <li><a href="/booked_wishes" class="nav-link px-2 text-muted">Забронированные мною желания</a></li>
+            {% endif %}
         </ul>
     </footer>
 </div>
