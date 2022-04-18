@@ -107,8 +107,8 @@ def register():
         user.set_password(form.password.data)
         import os.path
         path = os.path.join('static', 'img')
-        num_files = len([f for f in os.listdir(path)
-                         if os.path.isfile(os.path.join(path, f))])
+        num_files = len([_ for _ in os.listdir(path)
+                         if os.path.isfile(os.path.join(path, _))])
         f = form.picture.data
         filename = secure_filename(f.filename)
         way = os.path.join(
@@ -119,6 +119,7 @@ def register():
         db_sess.add(user)
         db_sess.commit()
         return redirect('/login')
+
     return render_template('register.html', title='Регистрация', form=form)
 
 
@@ -142,6 +143,7 @@ def add_wish():
         wish.title = form.title.data
         wish.description = form.content.data
         f = form.main_picture.data
+        print(f)
         filename = secure_filename(f.filename)
         way = os.path.join(
             'static', 'img', str(num_files + 1)
