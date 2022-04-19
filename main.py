@@ -17,6 +17,7 @@ app = Flask(__name__)
 api = Api(app)
 app.config['SECRET_KEY'] = 'yandexlyceum_secret_key'
 
+
 # для списка объектов
 api.add_resource(wishes_resources.WishesListResource, '/api/v2/wishes')
 
@@ -121,6 +122,58 @@ def register():
 
     return render_template('register.html', title='Регистрация', form=form)
 
+
+@app.route('/redact_profile/<int:id>', methods=['GET', 'POST'])
+def redact_profile(id):
+    form = RegisterForm()
+    if form.age.data or form.about.data or form.picture.data:
+        new_age = form.age.data
+        new_about = form.about.data
+        import os.path
+        path = os.path.join('static', 'img')
+        num_files = len([_ for _ in os.listdir(path)
+                         if os.path.isfile(os.path.join(path, _))])
+        f = form.picture.data
+        filename = secure_filename(f.filename)
+        way = os.path.join(
+            'static', 'img', str(num_files + 1) + "avatar"
+        )
+        f.save(way)
+        new_picture = f'../static/img/{num_files + 1}avatar'
+        database = 'db/give_me_a_gift.db'
+        con = sqlite3.connect(database)
+        cur = con.cursor()
+        smth_was = False
+        command = f"UPDATE users "
+        if new_age:
+            if smth_was:
+                command += ', '
+            else:
+                command += 'SET '
+            command += f"age = '{new_age}'"
+            smth_was = True
+        if new_about:
+            if smth_was:
+                command += ', '
+            else:
+                command += 'SET '
+            command += f"about = '{new_about}'"
+            smth_was = True
+
+        if f:
+            if smth_was:
+                command += ', '
+            else:
+                command += 'SET '
+            command += f"picture = '{new_picture}'"
+            smth_was = True
+        command += f' WHERE id = {current_user.id}'
+        cur.execute(command).fetchall()
+        con.commit()
+        con.close()
+        return redirect(f'/profile/{current_user.id}')
+
+    return render_template('redact_profile.html', form=form, id_=id)
 
 @app.route('/logout')
 @login_required
@@ -269,8 +322,11 @@ def not_found(error):
     return make_response(jsonify({'error': 'Not found'}), 404)
 
 
+
 if __name__ == '__main__':
     db_session.global_init("db/give_me_a_gift.db")
     app.register_blueprint(wishes_api.blueprint)
     port = int(os.environ.get("PORT", 5000))
     app.run(host='0.0.0.0', port=port)
+
+
