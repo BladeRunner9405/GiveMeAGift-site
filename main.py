@@ -17,7 +17,6 @@ app = Flask(__name__)
 api = Api(app)
 app.config['SECRET_KEY'] = 'yandexlyceum_secret_key'
 
-
 # для списка объектов
 api.add_resource(wishes_resources.WishesListResource, '/api/v2/wishes')
 
@@ -270,11 +269,8 @@ def not_found(error):
     return make_response(jsonify({'error': 'Not found'}), 404)
 
 
-
 if __name__ == '__main__':
     db_session.global_init("db/give_me_a_gift.db")
     app.register_blueprint(wishes_api.blueprint)
     port = int(os.environ.get("PORT", 5000))
     app.run(host='0.0.0.0', port=port)
-
-
